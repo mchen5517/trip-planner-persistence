@@ -20,7 +20,7 @@ router.get('/restaurants', function (req, res, next) {
     res.json(allRestaurants)
   })
   .catch(next);
-}); 
+});
 
 router.get('/activities', function (req, res, next) {
   Activity.findAll()
@@ -121,6 +121,17 @@ router.post('/days/:number/restaurant/:restId', function(req, res, next){
   ])
   .spread(function(day, restaurant){
     day.addRestaurant(restaurant);
+  })
+  .catch(next);
+});
+
+router.post('/days/:number/activity/:actId', function(req, res, next){
+  Promise.all([
+    Day.findOne({where: {number: req.params.number}}),
+    Activity.findById(req.params.actId)
+  ])
+  .spread(function(day, activity){
+    day.addActivity(activity);
   })
   .catch(next);
 });

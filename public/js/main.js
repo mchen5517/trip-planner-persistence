@@ -11,7 +11,7 @@ $(tripModule.load);
 // .then(console.log)
 
 // $.ajax({
-//   method: "DELETE", 
+//   method: "DELETE",
 //   url: '/api/days/4'
 // })
 // .then(console.log)
@@ -19,6 +19,8 @@ $(tripModule.load);
 // $.post('/api/days')
 // .then(console.log)
 
-$.post('/api/days/2/hotel/5');
+// $.post('/api/days/2/hotel/5');
 
-$.post('/api/days/2/restaurant/5');
+// $.post('/api/days/2/restaurant/5');
+
+// $.post('/api/days/2/activity/5');

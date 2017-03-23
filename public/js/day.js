@@ -98,12 +98,15 @@ var dayModule = (function () {
       case 'hotel':
         if (this.hotel) this.hotel.hide();
         this.hotel = attraction;
+        $.post(`/api/days/${this.number}/hotel/${attraction.id}`);
         break;
       case 'restaurant':
         utilsModule.pushUnique(this.restaurants, attraction);
+        $.post(`/api/days/${this.number}/restaurant/${attraction.id}`);
         break;
       case 'activity':
         utilsModule.pushUnique(this.activities, attraction);
+        $.post(`/api/days/${this.number}/activity/${attraction.id}`);
         break;
       default: console.error('bad type:', attraction);
     }
