@@ -118,6 +118,58 @@ router.delete('/days/:number', function(req, res, next){
   .catch(next);
 });
 
+router.delete('/days/:number/hotel/:hotelId', function(req, res, next){
+  Day.update({hotelId: null}, {where: {number: req.params.number}})
+  .then(function(updatedDay){
+    res.status(204).send();
+  })
+  .catch(next);
+});
+//
+
+router.delete('/days/:number/restaurant/:restId', function(req, res, next){
+
+  Day.findOne({where: {number: req.params.number}, include: [Restaurant]})
+    //Restaurant.findById(req.params.restId)
+  .then(function(day){
+    return [day.getRestaurants(), day];
+  })
+  .spread(function(restaurants, day){
+    for (var r = 0; r < restaurants.length; r++){
+      if (restaurants[r].id === parseInt(req.params.restId)){
+        restaurants.splice(r, 1)
+        break;
+      }
+    }
+    return day.setRestaurants(restaurants)
+  })
+  .then(function(){
+    res.sendStatus(204)
+  })
+  .catch(next);
+});
+
+router.delete('/days/:number/activity/:actId', function(req, res, next){
+  Day.findOne({where: {number: req.params.number}, include: [Activity]})
+    //Activity.findById(req.params.restId)
+  .then(function(day){
+    return [day.getActivities(), day];
+  })
+  .spread(function(activities, day){
+    for (var a = 0; a < activities.length; a++){
+      if (activities[a].id === parseInt(req.params.actId)){
+        activities.splice(a, 1)
+        break;
+      }
+    }
+    return day.setActivities(activities)
+  })
+  .then(function(){
+    res.sendStatus(204)
+  })
+  .catch(next);
+});
+
 router.post('/days/', function(req, res, next){
   Day.create(req.body)
   .then(function(createdDay){

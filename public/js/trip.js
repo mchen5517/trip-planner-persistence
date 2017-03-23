@@ -64,7 +64,7 @@
     if (this && this.blur) this.blur(); // removes focus box from buttons
     // var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
     var newDay = dayModule.create(day);
-    days[day.number] = newDay
+    days[day.number -1] = newDay
     if (days.length === 1) {
       currentDay = newDay;
     }
@@ -104,6 +104,7 @@
           //addedDay = dayModule.create(day);
         });
         if (!days.length) $(addDay);
+        console.log('days', days)
       })
     },
 

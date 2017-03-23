@@ -119,12 +119,24 @@ var dayModule = (function () {
     switch (attraction.type) {
       case 'hotel':
         this.hotel = null;
+          $.ajax({
+            method: 'DELETE',
+            url: `/api/days/${this.number}/hotel/${attraction.id}`
+          });
         break;
       case 'restaurant':
         utilsModule.remove(this.restaurants, attraction);
+        $.ajax({
+          method: 'DELETE',
+          url: `/api/days/${this.number}/restaurant/${attraction.id}`
+        });
         break;
       case 'activity':
         utilsModule.remove(this.activities, attraction);
+        $.ajax({
+          method: 'DELETE',
+          url: `/api/days/${this.number}/activity/${attraction.id}`
+        });
         break;
       default: console.error('bad type:', attraction);
     }
