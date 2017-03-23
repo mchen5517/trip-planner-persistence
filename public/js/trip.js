@@ -60,14 +60,17 @@
     switchTo(newDay);
   }
 
-  function getDay() {
+  function getDay(day) {
     if (this && this.blur) this.blur(); // removes focus box from buttons
-    var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
-    days.push(newDay);
+    // var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
+    var newDay = dayModule.create(day);
+    days[day.number] = newDay
     if (days.length === 1) {
       currentDay = newDay;
     }
     switchTo(newDay);
+    //stuff
+    return newDay
   }
 
   function deleteCurrentDay () {
@@ -97,10 +100,10 @@
       dataModule.daysPromise
       .then(function(days){
         days.forEach(function(day){
-          var addedDay = getDay();
+          getDay(day);
           //addedDay = dayModule.create(day);
         });
-        if(!days.length) $(addDay);
+        if (!days.length) $(addDay);
       })
     },
 

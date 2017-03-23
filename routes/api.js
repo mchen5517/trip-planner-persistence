@@ -71,12 +71,19 @@ router.get('/activities', function(req, res, next){
 });
 
 router.get('/days', function(req, res, next){
-  Day.findAll()
+  // Day.findAll()
+  // .then(function(days){
+  //   console.log("GOT ALL DAYS");
+  //   res.json(days);
+  // })
+  // .catch(next);
+  Day.getAllDays()
   .then(function(days){
-    console.log("GOT ALL DAYS");
-    res.json(days);
+    //console.log(days)
+    console.log('rest', days[0].restaurants)
+    res.json(days)
   })
-  .catch(next);
+  .catch(next)
 })
 
 router.get('/days/:number', function(req, res, next){
@@ -86,6 +93,20 @@ router.get('/days/:number', function(req, res, next){
     res.json(foundDay);
   })
   .catch(next);
+})
+
+router.get('/days/:number/attractions', function(req, res, next){
+  Day.findOne({where: {number: req.params.number}})
+  .then(function(foundDay){
+    console.log('found day')
+    return foundDay.attractions
+  })
+  .then(function(attractionLists){
+    console.log('found attractions', attractionLists)
+    res.json(attractionLists)
+  })
+  .catch(next);
+
 })
 
 router.delete('/days/:number', function(req, res, next){
@@ -113,6 +134,7 @@ router.post('/days/:number/hotel/:hotelId', function(req, res, next){
   })
   .catch(next);
 });
+//
 
 router.post('/days/:number/restaurant/:restId', function(req, res, next){
   Promise.all([
@@ -120,7 +142,10 @@ router.post('/days/:number/restaurant/:restId', function(req, res, next){
     Restaurant.findById(req.params.restId)
   ])
   .spread(function(day, restaurant){
-    day.addRestaurant(restaurant);
+    return day.addRestaurant(restaurant);
+  })
+  .then(function(){
+    res.sendStatus(204)
   })
   .catch(next);
 });
@@ -131,7 +156,10 @@ router.post('/days/:number/activity/:actId', function(req, res, next){
     Activity.findById(req.params.actId)
   ])
   .spread(function(day, activity){
-    day.addActivity(activity);
+    return day.addActivity(activity);
+  })
+  .then(function(){
+    res.sendStatus(204)
   })
   .catch(next);
 });
