@@ -11,13 +11,20 @@ var Day = db.define('day', {
     }
   },
   hooks: {
-    afterCreate: function(user, options, fn){
-      Day.max('number')
-      .then(function(maxNum){
-        return user.update({ number: ((maxNum + 1) || 1)});
+    afterDestroy: function(day, options, fn){
+      Day.findAll({where: ['number > ?', day.number]})
+      .then(function(days){
+        days.forEach(function(day){
+          day.decrement('number');
+          day.save();
+        })
       })
     }
   }
 });
+
+// Day.hook('Destroy', function(day, options, fn){
+//   console.log("????:", day);
+// });
 
 module.exports = Day;

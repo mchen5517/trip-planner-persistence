@@ -16,6 +16,11 @@ var dataModule = (function () {
     activitiesPromise: $.ajax({
       method: 'GET',
       url: '/api/activities'
+    }),
+
+    daysPromise: $.ajax({
+      method: 'GET',
+      url: '/api/days'
     })
 
   };

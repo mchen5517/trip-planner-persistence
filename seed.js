@@ -74,6 +74,10 @@ db.sync({force: true})
     });
   });
 })
+.then(function(){
+  return db.model('day')
+  .bulkCreate([{number: 1},{number: 2},{number: 3, hotelId: 1}]);
+})
 .then(function () {
   console.log("Finished inserting data");
 })

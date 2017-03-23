@@ -1,3 +1,4 @@
+var Promise = require('bluebird');
 var db = require('../models');
 var Hotel = db.model('hotel');
 var Restaurant = db.model('restaurant');
@@ -88,22 +89,41 @@ router.get('/days/:number', function(req, res, next){
 })
 
 router.delete('/days/:number', function(req, res, next){
-  Day.destroy({where: {number: req.params.number}})
-  .then(function(){
-    console.log("DELETED A DAY");
+  Day.destroy({where: {number: req.params.number}, individualHooks: true})
+  .then(function(data){
+    console.log("DELETED A DAY", data);
     res.json({});
   })
   .catch(next);
 });
 
 router.post('/days/', function(req, res, next){
-  Day.create()
+  Day.create(req.body)
   .then(function(createdDay){
     console.log("CREATED A DAY");
     res.json(createdDay);
   })
   .catch(next);
-})
+});
+
+router.post('/days/:number/hotel/:hotelId', function(req, res, next){
+  Day.update({hotelId: req.params.hotelId}, {where: {number: req.params.number}})
+  .then(function(updatedDays){
+    res.status(204).send();
+  })
+  .catch(next);
+});
+
+router.post('/days/:number/restaurant/:restId', function(req, res, next){
+  Promise.all([
+    Day.findOne({where: {number: req.params.number}}),
+    Restaurant.findById(req.params.restId)
+  ])
+  .spread(function(day, restaurant){
+    day.addRestaurant(restaurant);
+  })
+  .catch(next);
+});
 
 
 module.exports = router;

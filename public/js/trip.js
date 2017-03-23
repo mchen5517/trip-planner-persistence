@@ -15,12 +15,12 @@
  * which take `attraction` objects and pass them to `currentDay`.
  */
 
-var tripModule = (function () {
+ var tripModule = (function () {
 
   // application state
 
   var days = [],
-      currentDay;
+  currentDay;
 
   // jQuery selections
 
@@ -48,6 +48,21 @@ var tripModule = (function () {
   function addDay () {
     if (this && this.blur) this.blur(); // removes focus box from buttons
     var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
+    $.ajax({
+      method: 'POST',
+      url: '/api/days',
+      data: { number: days.length + 1 }
+    });
+    days.push(newDay);
+    if (days.length === 1) {
+      currentDay = newDay;
+    }
+    switchTo(newDay);
+  }
+
+  function getDay() {
+    if (this && this.blur) this.blur(); // removes focus box from buttons
+    var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
     days.push(newDay);
     if (days.length === 1) {
       currentDay = newDay;
@@ -60,12 +75,16 @@ var tripModule = (function () {
     if (days.length < 2 || !currentDay) return;
     // remove from the collection
     var index = days.indexOf(currentDay),
-      previousDay = days.splice(index, 1)[0],
-      newCurrent = days[index] || days[index - 1];
+    previousDay = days.splice(index, 1)[0],
+    newCurrent = days[index] || days[index - 1];
     // fix the remaining day numbers
     days.forEach(function (day, i) {
       day.setNumber(i + 1);
     });
+    $.ajax({
+      method: 'DELETE',
+      url: '/api/days/' + currentDay.number,
+    })
     switchTo(newCurrent);
     previousDay.hideButton();
   }
@@ -75,7 +94,14 @@ var tripModule = (function () {
   var publicAPI = {
 
     load: function () {
-      $(addDay);
+      dataModule.daysPromise
+      .then(function(days){
+        days.forEach(function(day){
+          var addedDay = getDay();
+          //addedDay = dayModule.create(day);
+        });
+        if(!days.length) $(addDay);
+      })
     },
 
     switchTo: switchTo,
